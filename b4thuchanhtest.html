@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Employee</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 4px; }
+    .nav-buttons { display: flex; gap: 5px; margin-bottom: 15px; }
+    .nav-buttons button { padding: 5px 10px; cursor: pointer; }
+    fieldset { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
+    legend { font-weight: bold; }
+    .form-section { display: grid; grid-template-columns: 150px 1fr; gap: 10px 20px; align-items: center; }
+    .form-section .full { grid-column: 1 / -1; }
+    label { margin-right: 5px; }
+    input[type="text"], input[type="email"], input[type="datetime-local"], select, textarea {
+      width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 3px;
+    }
+    textarea { height: 100px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    button { border: none; border-radius: 3px; padding: 8px 15px; cursor: pointer; }
+    .submit { background: #28a745; color: #fff; }
+    .cancel { background: #dc3545; color: #fff; }
+    .captcha { font-family: monospace; font-size: 1.2em; letter-spacing: 4px; border: 1px solid #ccc; display: inline-block; padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav-buttons">
+      <button type="button">«</button>
+      <button type="button">»</button>
+    </div>
+    <form action="#" method="post">
+      <fieldset>
+        <legend>Basic Info</legend>
+        <div class="form-section">
+          <label for="empid">Employee ID</label><input id="empid" name="empid" type="text">
+          <label for="lastname">Last Name</label><input id="lastname" name="lastname" type="text">
+          <label for="firstname">First Name</label><input id="firstname" name="firstname" type="text">
+          <label>Gender</label>
+          <div>
+            <label><input name="gender" type="radio" value="male"> Male</label>
+            <label><input name="gender" type="radio" value="female"> Female</label>
+            <label><input name="gender" type="radio" value="xxx"> XXX</label>
+            <label><input name="gender" type="radio" value="zzz"> ZZZ</label>
+          </div>
+          <label for="title">Title</label><input id="title" name="title" type="text">
+          <label for="suffix">Suffix</label><input id="suffix" name="suffix" type="text">
+          <label for="birthdate">BirthDate</label><input id="birthdate" name="birthdate" type="datetime-local">
+          <label for="hiredate">HireDate</label><input id="hiredate" name="hiredate" type="datetime-local">
+          <label for="ssn">SSN # (if applicable)</label><input id="ssn" name="ssn" type="text">
+          <label for="reports">Reports To</label>
+          <select id="reports" name="reports">
+            <option value="Buchanan">Buchanan</option>
+            <option value="Fuller">Fuller</option>
+            <option value="Peacock">Peacock</option>
+          </select>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Contact Info</legend>
+        <div class="form-section">
+          <label for="email">Email</label><input id="email" name="email" type="email">
+          <label for="address">Address</label><input id="address" name="address" type="text">
+          <label for="city">City</label><input id="city" name="city" type="text">
+          <label for="region">Region</label><input id="region" name="region" type="text">
+          <label for="postal">Postal Code</label><input id="postal" name="postal" type="text">
+          <label for="country">Country</label>
+          <select id="country" name="country">
+            <option>Russian Federation</option>
+            <option>United Kingdom</option>
+            <option>USA</option>
+          </select>
+          <label for="phone">US Home Phone</label><input id="phone" name="phone" type="text">
+          <label for="photo">Photo</label><input id="photo" name="photo" type="text">
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Optional Info</legend>
+        <div class="form-section">
+          <label for="notes">Notes</label><textarea id="notes" name="notes"></textarea>
+          <label>Preferred Shift</label>
+          <div>
+            <label><input name="shift" type="checkbox" value="regular"> Regular</label>
+            <label><input name="shift" type="checkbox" value="gravy"> Gravy Yard</label>
+          </div>
+          <label for="active">Active?</label><input id="active" name="active" type="checkbox">
+          <label>Are you human?</label>
+          <div>
+            <span class="captcha">TIDAWO</span>
+            <button type="button">Click to change</button>
+          </div>
+        </div>
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="submit">Submit</button>
+        <button type="button" class="cancel">Cancel</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

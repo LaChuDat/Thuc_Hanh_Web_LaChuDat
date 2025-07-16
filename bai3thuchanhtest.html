@@ -1,0 +1,80 @@
+
+<!DOCTYPE html><!-- khai bao html5-->
+<html lang="vi"> <!--xac dinh ngon ngu chinh la tieng viet -->
+<head>
+    <meta charset="UTF-8"> <!-- mã hóa utf 8 hỗ trợ tiếng việt có dấu -->
+    <title> Bai3 Bảng điểm</title>
+    <style>
+        /* trong đây là css dùng để tạo thẻ table*/
+        table{
+            width: 100%;
+            border-collapse:collapse ; /*cho mấy đường kẻ liền nhau*/
+        }
+        th,td{/*th là header trong bảng, td là dữ liệu trong bảng*/
+            border: 1px solid #000;  /* độ dày 1pixel, solid kiểu viền liền màu đen*/
+             padding: 8px; /* khoảng đệm 8px quanh nội dung để chữ k sát viền*/
+            text-align: center;/* căn giữa nội dung theo chiều ngang*/
+            }
+    </style>
+</head>   
+<body>
+    <h1 style="text-align: center;">bài 3: bảng điểm</h1>
+    <table> <!-- bắt đầu tạo bảng-->
+<tr><!--tr dùng để xác định hàng trong bảng, th: tiêu đề, colspan bên dưới có mấy cột-->
+    <th colspan="2">student </th>
+    <th colspan="4">Exam</th>
+    <th colspan="4>">2nd exam</th>
+    <th colspan="2">final grade</th>
+</tr>
+<!-- hàng 2-->
+ <tr>
+     <th>Code</th>   
+      <th>Name</th>   
+      <th>Q1</th>     
+      <th>Q2</th>     
+      <th>Q3</th>    
+      <th>Grade</th> 
+      <th>Q1</th>     
+      <th>Q2</th>     
+      <th>Q3</th>     
+      <th>Grade</th>  
+      <th>NR</th>     
+      <th>R</th>    
+ </tr>
+ <tr><!-- hàng dữ liệu của jon-->
+   <td> 80549061</td>
+   <td>John</td>
+   <td>8</td><td>7</td><td>5</td><td></td><td>6</td><td>7</td><td>8</td>
+   <td></td><td></td><td></td><td>70%</td><td>100%</td><td>100%</td>
+   <td>17.6</td><td></td><td></td><td></td><td></td><td>17.6</td><td>8</td>
+ </tr>
+ <tr><!--mary-->
+ <td>80549062</td> 
+      <td>Mary</td>    
+      <td>10%</td>      
+      <td>50%</td>      
+      <td>50%</td>      
+      <td>6.8</td>      
+      <td>100%</td>    
+      <td>100%</td>     
+      <td>50%</td>      
+      <td>16.5</td>     
+      <td>16.5</td>     
+      <td>17</td>       
+ </tr>
+  <tr>
+      <td>80549063</td> <!-- Mã số Claire -->
+      <td>Claire</td>   
+      <td></td>         
+      <td></td>         
+      <td></td>         
+      <td></td>         
+      <td>50%</td>      
+      <td>50%</td>      
+      <td>50%</td>      
+      <td>10.0</td>     
+      <td>10.0</td>     
+      <td>10</td>      
+    </tr>
+    </table>
+</body>
