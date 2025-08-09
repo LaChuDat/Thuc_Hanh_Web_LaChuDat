@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đề 2 - jQuery (rút gọn)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;background:#f4f8fb}
+    header{background:#212121;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+    .left{font-weight:700}
+    .right{display:flex;align-items:center;gap:12px}
+    .right input{padding:6px;border:1px solid #ccc;border-radius:4px}
+    .right button{padding:6px 12px;border:0;border-radius:4px;background:#1abc9c;color:#fff;cursor:pointer}
+
+    .container{background:#fff;margin:20px;border-radius:8px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .top-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .top-controls button{padding:8px 12px;border:0;border-radius:6px;background:#e8f0fe;color:#0b5db7;cursor:pointer;font-weight:600}
+    #openModal{background:#63a4ff;color:#fff}
+    .search-controls{display:flex;align-items:center;background:#eef2f7;border-radius:6px;overflow:hidden}
+    .search-controls input{border:1px solid #d9e0ea;border-radius:0;padding:10px;width:220px}
+    .search-controls button{background:#eef2f7;color:#0b5db7;font-weight:700;border:0;padding:10px 12px;cursor:pointer}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;text-align:left;border-top:1px solid #e6e9ef}
+    thead th{background:#212121;color:#fff}
+    .actions{display:flex;gap:0}
+    .actions i{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#fff}
+    .fa-eye{background:#80bcf7}
+    .fa-pen{background:#ffc107;color:#212121}
+    .fa-times{background:#dc3545}
+
+    .delete-btn{margin-top:12px;background:#dc3545;color:#fff;padding:10px 14px;border:0;border-radius:6px;cursor:pointer}
+    .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:16px;color:#5f6b7a}
+    .pagination .page-button button{padding:6px 10px;margin:0 2px;border:0;border-radius:4px;background:#f5f5f5;cursor:pointer}
+    .pagination .active-page,.pagination .page-button button:hover{background:#80bcf7;color:#fff;font-weight:700}
+
+    footer{background:#0b2e6b;color:#fff;padding:20px 100px;font-size:14px}
+    footer p:first-child{font-size:18px;font-weight:700}
+    .email{text-decoration:underline;color:#a7d3ff;cursor:pointer}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.35)}
+    .modal-content{background:#fff;width:420px;border-radius:10px;box-shadow:0 12px 28px rgba(0,0,0,.2);position:relative;padding:20px 22px}
+    .modal-content h2{margin:0 0 8px;color:#0b5db7}
+    .modal-content label{display:block;margin:8px 0 4px;font-weight:600}
+    .modal-content input{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:6px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+    .modal-actions button{padding:8px 14px;border:0;border-radius:6px;cursor:pointer}
+    .modal-actions .cancel{background:#e7ebf1;color:#39424e}
+    .modal-actions .submit{background:#1abc9c;color:#fff}
+    .close{position:absolute;top:10px;right:12px;font-size:20px;color:#9aa6b2;cursor:pointer}
+
+    /* Validate */
+    label.error{color:#e74c3c;font-size:13px;margin-top:4px;display:block}
+    input.error{border-color:#e74c3c}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">Trường Đại học Thủy lợi</div>
+    <div class="right">
+      <span>Trang chủ</span>
+      <span>Quản lý cửa hàng</span>
+      <input type="text" id="search" placeholder="Nhập nội dung tìm kiếm"/>
+      <button id="headerSearchBtn">TÌM KIẾM</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="top-controls">
+      <button id="openModal"><i class="fas fa-plus"></i> THÊM</button>
+      <button id="exportBtn"><i class="fas fa-file-export"></i> XUẤT RA FILE</button>
+      <div class="search-controls">
+        <button type="button">></button>
+        <input type="text" id="search-top" placeholder="Tìm kiếm giao dịch"/>
+        <button id="inlineSearchBtn" class="search-btn" title="Tìm"><i class="fas fa-search"></i></button>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:20px">
+        <div style="display:flex;flex-direction:column;align-items:center;font-size:15px;line-height:1">
+          <span>Kết</span><span>quả</span>
+        </div>
+        <select id="pageSize" style="width:100px;color:#777;padding:6px;border:1px solid #cfd6e4;border-radius:6px">
+          <option>5</option>
+          <option selected>20</option>
+          <option>50</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="checkAll"/></th>
+            <th>Hành động</th>
+            <th>ID</th>
+            <th>Khách hàng</th>
+            <th>Nhân viên</th>
+            <th>Số tiền</th>
+            <th>Ngày mua</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox" class="rowcheck"/></td>
+            <td class="actions">
+              <i class="fas fa-eye" title="Xem"></i>
+              <i class="fas fa-pen" title="Sửa"></i>
+              <i class="fas fa-times" title="Xóa"></i>
+            </td>
+            <td>1102</td><td>Võ Hoài An</td><td>Mai Thục Anh</td><td>250 000</td><td>06 Tháng 6 2024 09:00</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="rowcheck"/></td>
+            <td class="actions">
+              <i class="fas fa-eye" title="Xem"></i>
+              <i class="fas fa-pen" title="Sửa"></i>
+              <i class="fas fa-times" title="Xóa"></i>
+            </td>
+            <td>1199</td><td>Hoàng Thị Thắng</td><td>Nguyễn Văn Hồng</td><td>600 000</td><td>06 Tháng 6 2024 09:03</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="rowcheck"/></td>
+            <td class="actions">
+              <i class="fas fa-eye" title="Xem"></i>
+              <i class="fas fa-pen" title="Sửa"></i>
+              <i class="fas fa-times" title="Xóa"></i>
+            </td>
+            <td>1239</td><td>Nguyễn Huy Quang</td><td>Nguyễn Văn Hồng</td><td>934 000</td><td>06 Tháng 6 2024 09:10</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="rowcheck"/></td>
+            <td class="actions">
+              <i class="fas fa-eye" title="Xem"></i>
+              <i class="fas fa-pen" title="Sửa"></i>
+              <i class="fas fa-times" title="Xóa"></i>
+            </td>
+            <td>1677</td><td>Huỳnh Văn Nam</td><td>Mai Thục Anh</td><td>150 000</td><td>06 Tháng 6 2024 09:20</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="rowcheck"/></td>
+            <td class="actions">
+              <i class="fas fa-eye" title="Xem"></i>
+              <i class="fas fa-pen" title="Sửa"></i>
+              <i class="fas fa-times" title="Xóa"></i>
+            </td>
+            <td>2100</td><td>Nguyễn Hồng Minh</td><td>Mai Thục Anh</td><td>354 000</td><td>06 Tháng 6 2024 09:24</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button class="delete-btn" id="bulkDeleteBtn">DELETE SELECTED RECORDS</button>
+
+    <div class="pagination">
+      <div class="page-button">
+        <span>Trang</span>
+        <button class="active-page">1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button>
+        <button>&gt;</button><button>&gt;&gt;</button>
+      </div>
+      <span id="resultInfo">Kết quả: 5 dòng</span>
+    </div>
+  </div>
+
+  <footer>
+    <p>TRƯỜNG ĐẠI HỌC THỦY LỢI</p>
+    <p>Địa chỉ: 175 Tây Sơn, Đống Đa, Hà Nội</p>
+    <p>Điện thoại: (024) 38522201 - Fax: (024) 35633351</p>
+    <p>Email: <span class="email">phongcntt@tlu.edu.vn</span></p>
+  </footer>
+
+  <!-- Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2 id="modalTitle">Thêm giao dịch</h2>
+      <form id="addForm">
+        <label for="khachhang">Khách hàng</label>
+        <input type="text" id="khachhang" name="khachhang"/>
+        <label for="nhanvien">Nhân viên</label>
+        <input type="text" id="nhanvien" name="nhanvien"/>
+        <label for="sotien">Số tiền</label>
+        <input type="text" id="sotien" name="sotien" placeholder="VD: 250000"/>
+        <div class="modal-actions">
+          <button type="button" class="cancel">Hủy</button>
+          <button type="submit" class="submit">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+  <script>
+    $(function(){
+      const $modal = $('#addModal');
+      const $form  = $('#addForm');
+      const $tbody = $('#tbl tbody');
+      let $editingRow = null;
+
+      // Open / Close modal
+      $('#openModal').on('click', () => openModal());
+      $('#closeModal, .cancel').on('click', closeModal);
+      $modal.on('click', e => { if(e.target === e.currentTarget) closeModal(); });
+
+      function openModal(title='Thêm giao dịch'){
+        $('#modalTitle').text(title);
+        $modal.css('display','flex');
+      }
+      function closeModal(){
+        $modal.hide();
+        $editingRow = null;
+        $form[0].reset();
+        $form.validate().resetForm();
+        $form.find('input').removeClass('error');
+      }
+
+      // Select all / bulk delete
+      $('#checkAll').on('change', function(){ $('.rowcheck').prop('checked', this.checked); });
+      $('#bulkDeleteBtn').on('click', function(){
+        const $rows = $('.rowcheck:checked').closest('tr');
+        if(!$rows.length) return alert('Chưa chọn bản ghi nào.');
+        if(confirm('Xoá các bản ghi đã chọn?')){
+          $rows.remove();
+          updateResultInfo();
+        }
+      });
+
+      // Search (cả 2 ô dùng chung)
+      function doSearch(){
+        const q = ($('#search').val() || $('#search-top').val() || '').trim().toLowerCase();
+        $('#search, #search-top').val(q);
+        $tbody.find('tr').each(function(){
+          const txt = $(this).text().toLowerCase();
+          $(this).toggle(txt.indexOf(q) > -1);
+        });
+        updateResultInfo();
+      }
+      $('#headerSearchBtn, #inlineSearchBtn').on('click', doSearch);
+      $('#search, #search-top').on('keyup', e => { if(e.key==='Enter') doSearch(); });
+
+      // Export (demo)
+      $('#exportBtn').on('click', () => alert('Xuất file: demo (CSV/Excel có thể thêm sau)'));
+
+      // Validate
+      $form.validate({
+        rules:{
+          khachhang:{required:true, maxlength:30},
+          nhanvien:{required:true, maxlength:30},
+          sotien:{required:true, digits:true, min:1}
+        },
+        messages:{
+          khachhang:{required:'Vui lòng nhập tên khách hàng!', maxlength:'Tên khách hàng không vượt quá 30 ký tự!'},
+          nhanvien:{required:'Vui lòng nhập tên nhân viên!', maxlength:'Tên nhân viên không vượt quá 30 ký tự!'},
+          sotien:{required:'Vui lòng nhập số tiền!', digits:'Số tiền phải là số!', min:'Số tiền > 0'}
+        },
+        submitHandler:function(){
+          const kh = esc($('#khachhang').val());
+          const nv = esc($('#nhanvien').val());
+          const st = parseMoney($('#sotien').val()); // lấy số
+          if($editingRow){
+            const tds = $editingRow.children('td');
+            $(tds[3]).text(kh);
+            $(tds[4]).text(nv);
+            $(tds[5]).text(formatMoney(st));
+            alert('Cập nhật giao dịch thành công!');
+          } else {
+            const nextId = getNextId();
+            $tbody.append(`
+              <tr>
+                <td><input type="checkbox" class="rowcheck"/></td>
+                <td class="actions">
+                  <i class="fas fa-eye" title="Xem"></i>
+                  <i class="fas fa-pen" title="Sửa"></i>
+                  <i class="fas fa-times" title="Xóa"></i>
+                </td>
+                <td>${nextId}</td>
+                <td>${kh}</td>
+                <td>${nv}</td>
+                <td>${formatMoney(st)}</td>
+                <td>${nowVN()}</td>
+              </tr>
+            `);
+            alert('Thêm giao dịch thành công!');
+          }
+          closeModal();
+          updateResultInfo();
+        }
+      });
+
+      // Row actions
+      $tbody.on('click','.fa-eye',function(){
+        const t = rowData($(this).closest('tr'));
+        alert(`Chi tiết giao dịch:\nID: ${t.id}\nKhách: ${t.khach}\nNhân viên: ${t.nhanvien}\nSố tiền: ${t.sotien}\nNgày mua: ${t.ngay}`);
+      });
+      $tbody.on('click','.fa-pen',function(){
+        $editingRow = $(this).closest('tr');
+        const t = rowData($editingRow);
+        $('#khachhang').val(t.khach);
+        $('#nhanvien').val(t.nhanvien);
+        $('#sotien').val(parseMoney(t.sotien));
+        openModal('Sửa giao dịch');
+      });
+      $tbody.on('click','.fa-times',function(){
+        const $tr = $(this).closest('tr');
+        if(confirm('Xoá bản ghi này?')){ $tr.remove(); updateResultInfo(); }
+      });
+
+      // Helpers
+      function rowData($tr){
+        const td = $tr.children('td');
+        return {
+          id: $(td[2]).text().trim(),
+          khach: $(td[3]).text().trim(),
+          nhanvien: $(td[4]).text().trim(),
+          sotien: $(td[5]).text().trim(),
+          ngay: $(td[6]).text().trim()
+        };
+      }
+      function getNextId(){
+        let max = 0;
+        $tbody.find('tr').each(function(){
+          const v = parseInt($(this).children('td').eq(2).text(),10);
+          if(!isNaN(v)) max = Math.max(max, v);
+        });
+        return max + 1;
+      }
+      function formatMoney(n){ return Number(n||0).toLocaleString('vi-VN'); }
+      function parseMoney(s){ return parseInt(String(s).replace(/[^\d]/g,''),10) || 0; }
+      function nowVN(){
+        const d = new Date();
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yyyy = d.getFullYear();
+        const HH = String(d.getHours()).padStart(2,'0');
+        const MM = String(d.getMinutes()).padStart(2,'0');
+        return `${dd} Tháng ${mm} ${yyyy} ${HH}:${MM}`;
+      }
+      function esc(s){return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+      function updateResultInfo(){
+        const visible = $tbody.find('tr:visible').length;
+        $('#resultInfo').text(`Kết quả: ${visible} dòng`);
+        // đồng bộ checkAll
+        const total = $tbody.find('.rowcheck').length;
+        const checked = $tbody.find('.rowcheck:checked').length;
+        $('#checkAll').prop('checked', total>0 && total===checked);
+      }
+
+      // Khởi tạo
+      updateResultInfo();
+    });
+  </script>
+</body>
+</html>

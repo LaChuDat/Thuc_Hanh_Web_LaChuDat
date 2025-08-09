@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đề 3 - jQuery (rút gọn)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;background:#f4f8fb}
+    header{background:#0b5db7;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+    .left{font-weight:700}
+    .right{display:flex;align-items:center;gap:12px}
+    .right input{padding:6px;border:1px solid #cfd6e4;border-radius:4px}
+    .right button{padding:6px 12px;border:0;border-radius:4px;background:#1abc9c;color:#fff;cursor:pointer}
+
+    .container{background:#fff;margin:20px;border-radius:8px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .top-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .top-controls button{padding:8px 12px;border:0;border-radius:6px;background:#e8f0fe;color:#0b5db7;cursor:pointer;font-weight:600}
+    #openModal{background:#63a4ff;color:#fff}
+    .search-controls{display:flex;align-items:center;background:#eef2f7;border-radius:6px;overflow:hidden}
+    .search-controls input{border:1px solid #d9e0ea;border-radius:0;padding:10px;width:220px}
+    .search-controls button{background:#eef2f7;color:#0b5db7;font-weight:700}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;text-align:left;border-top:1px solid #e6e9ef}
+    thead th{background:#212121;color:#fff}
+    .actions{display:flex;gap:0}
+    .actions i{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#fff}
+    .fa-eye{background:#80bcf7}
+    .fa-pen{background:#ffc107;color:#212121}
+    .fa-times{background:#dc3545}
+
+    .pagination{display:flex;justify-content:flex-end;margin-top:14px;color:#5f6b7a}
+
+    footer{background:#0b2e6b;color:#fff;padding:20px 100px}
+    footer p:first-child{font-size:18px;font-weight:700}
+    .email{text-decoration:underline;color:#a7d3ff;cursor:pointer}
+    .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.35)}
+    .modal-content{background:#fff;width:420px;border-radius:10px;box-shadow:0 12px 28px rgba(0,0,0,.2);position:relative;padding:20px 22px}
+    .modal-content h2{margin:0 0 8px;color:#0b5db7}
+    .modal-content label{display:block;margin:8px 0 4px;font-weight:600}
+    .modal-content input{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:6px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+    .modal-actions button{padding:8px 14px;border:0;border-radius:6px;cursor:pointer}
+    .modal-actions .cancel{background:#e7ebf1;color:#39424e}
+    .modal-actions .submit{background:#1abc9c;color:#fff}
+    .close{position:absolute;top:10px;right:12px;font-size:20px;color:#9aa6b2;cursor:pointer}
+    label.error{color:#e74c3c;font-size:13px;margin-top:4px;display:block}
+    input.error{border-color:#e74c3c}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">Trường Đại học Thủy lợi</div>
+    <div class="right">
+      <span>Trang chủ</span>
+      <span>Quản lý cửa hàng</span>
+      <input type="text" id="search" placeholder="Nhập nội dung tìm kiếm">
+      <button id="headerSearchBtn">TÌM KIẾM</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="top-controls">
+      <button id="openModal"><i class="fas fa-plus"></i> THÊM</button>
+      <button id="exportBtn"><i class="fas fa-file-export"></i> XUẤT RA FILE</button>
+      <div class="search-controls">
+        <button type="button">></button>
+        <input type="text" id="search-top" placeholder="Tìm kiếm giao dịch">
+        <button id="inlineSearchBtn" title="Tìm"><i class="fas fa-search"></i></button>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div style="display:flex;flex-direction:column;align-items:center;font-size:14px;line-height:1">
+          <span>Kết</span><span>quả</span>
+        </div>
+        <select id="pageSize" style="width:90px;color:#777;padding:6px;border:1px solid #cfd6e4;border-radius:6px">
+          <option selected>20</option>
+          <option>10</option>
+          <option>50</option>
+        </select>
+      </div>
+    </div>
+
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Hành động</th>
+          <th>STT</th>
+          <th>Tên</th>
+          <th>Họ đệm</th>
+          <th>Địa chỉ</th>
+          <th>Hoạt động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><i class="fas fa-caret-down"></i></td>
+          <td class="actions">
+            <i class="fas fa-eye" title="Xem"></i>
+            <i class="fas fa-pen" title="Sửa"></i>
+            <i class="fas fa-times" title="Xóa"></i>
+          </td>
+          <td>1</td><td>Mai</td><td>Thục Anh</td><td>23 Hoàng Đạo Thúy, Thanh Xuân, Hà Nội</td>
+          <td><i class="fas fa-check" style="color:green"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-caret-down"></i></td>
+          <td class="actions">
+            <i class="fas fa-eye" title="Xem"></i>
+            <i class="fas fa-pen" title="Sửa"></i>
+            <i class="fas fa-times" title="Xóa"></i>
+          </td>
+          <td>2</td><td>Hoàng</td><td>Sinh Hồng</td><td>23 Hoàng Đạo Thúy, Thanh Xuân, Hà Nội</td>
+          <td><i class="fas fa-times" style="color:red"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-caret-down"></i></td>
+          <td class="actions">
+            <i class="fas fa-eye" title="Xem"></i>
+            <i class="fas fa-pen" title="Sửa"></i>
+            <i class="fas fa-times" title="Xóa"></i>
+          </td>
+          <td>3</td><td>Tính</td><td>Mai Trung</td><td>1411 Đường Láng, Cầu Giấy, Hà Nội</td>
+          <td><i class="fas fa-check" style="color:green"></i></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-caret-down"></i></td>
+          <td class="actions">
+            <i class="fas fa-eye" title="Xem"></i>
+            <i class="fas fa-pen" title="Sửa"></i>
+            <i class="fas fa-times" title="Xóa"></i>
+          </td>
+          <td>4</td><td>Hồng</td><td>Nguyễn Văn</td><td>1411 Đường Láng, Cầu Giấy, Hà Nội</td>
+          <td><i class="fas fa-times" style="color:red"></i></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <span id="resultInfo">Kết quả 1 đến 4</span>
+    </div>
+  </div>
+
+  <footer>
+    <p>TRƯỜNG ĐẠI HỌC THỦY LỢI</p>
+    <p>Địa chỉ: 175 Tây Sơn, Đống Đa, Hà Nội</p>
+    <p>Điện thoại: (024) 38522201 - Fax: (024) 35633351</p>
+    <p>Email: <span class="email">phongcntt@tlu.edu.vn</span></p>
+  </footer>
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2 id="modalTitle">Thêm nhân viên</h2>
+      <form id="addForm">
+        <label for="ten">Tên</label>
+        <input type="text" id="ten" name="ten" />
+        <label for="hodem">Họ đệm</label>
+        <input type="text" id="hodem" name="hodem" />
+        <label for="diachi">Địa chỉ</label>
+        <input type="text" id="diachi" name="diachi" />
+        <div class="modal-actions">
+          <button type="button" class="cancel">Hủy</button>
+          <button type="submit" class="submit">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+  <script>
+    $(function(){
+      const $modal = $('#addModal');
+      const $form = $('#addForm');
+      const $tbody = $('#tbl tbody');
+      let $editingRow = null; 
+      $('#openModal').on('click', () => openModal());
+      $('#closeModal, .cancel').on('click', closeModal);
+      $modal.on('click', e => { if(e.target === e.currentTarget) closeModal(); });
+      $(document).on('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+      function openModal(title = 'Thêm nhân viên'){
+        $('#modalTitle').text(title);
+        $modal.css('display','flex');
+      }
+      function closeModal(){
+        $modal.hide();
+        $editingRow = null;
+        $form[0].reset();
+        $form.validate().resetForm();
+        $form.find('input').removeClass('error');
+      }
+
+
+      function doSearch(){
+        const q = ($('#search').val() || $('#search-top').val() || '').trim().toLowerCase();
+        $('#search, #search-top').val(q);
+        $tbody.find('tr').each(function(){
+          const t = $(this).children('td').map((i,td)=>$(td).text().toLowerCase()).get().join(' ');
+          $(this).toggle(t.indexOf(q) > -1);
+        });
+        updateResultInfo();
+      }
+      $('#headerSearchBtn, #inlineSearchBtn').on('click', doSearch);
+      $('#search, #search-top').on('keyup', function(e){ if(e.key==='Enter') doSearch(); });
+      $('#exportBtn').on('click', () => alert('Tính năng xuất file: demo'));
+      $form.validate({
+        rules:{
+          ten:{required:true, maxlength:15},
+          hodem:{required:true, maxlength:20},
+          diachi:{required:true, maxlength:50}
+        },
+        messages:{
+          ten:{required:'Vui lòng nhập tên.', maxlength:'Tên không vượt quá 15 ký tự.'},
+          hodem:{required:'Vui lòng nhập họ đệm.', maxlength:'Họ đệm không vượt quá 20 ký tự.'},
+          diachi:{required:'Vui lòng nhập địa chỉ.', maxlength:'Địa chỉ không vượt quá 50 ký tự.'}
+        },
+        submitHandler:function(){
+          const ten = esc($('#ten').val()), hodem = esc($('#hodem').val()), diachi = esc($('#diachi').val());
+          if($editingRow){
+        
+            const tds = $editingRow.children('td');
+            $(tds[3]).text(ten);
+            $(tds[4]).text(hodem);
+            $(tds[5]).text(diachi);
+            alert('Cập nhật thành công!');
+          } else {
+          
+            const nextStt = getNextStt();
+            $tbody.append(`
+              <tr>
+                <td><i class="fas fa-caret-down"></i></td>
+                <td class="actions">
+                  <i class="fas fa-eye" title="Xem"></i>
+                  <i class="fas fa-pen" title="Sửa"></i>
+                  <i class="fas fa-times" title="Xóa"></i>
+                </td>
+                <td>${nextStt}</td>
+                <td>${ten}</td>
+                <td>${hodem}</td>
+                <td>${diachi}</td>
+                <td><i class="fas fa-check" style="color:green"></i></td>
+              </tr>
+            `);
+            alert('Thêm nhân viên thành công!');
+          }
+          closeModal();
+          updateResultInfo();
+        }
+      });
+      $tbody.on('click','.fa-eye',function(){
+        const $tr = $(this).closest('tr'), t = rowData($tr);
+        alert(`Xem chi tiết:\nSTT: ${t.stt}\nTên: ${t.ten}\nHọ đệm: ${t.hodem}\nĐịa chỉ: ${t.diachi}`);
+      });
+
+      $tbody.on('click','.fa-pen',function(){
+        $editingRow = $(this).closest('tr');
+        const t = rowData($editingRow);
+        $('#ten').val(t.ten);
+        $('#hodem').val(t.hodem);
+        $('#diachi').val(t.diachi);
+        openModal('Sửa nhân viên');
+      });
+
+      $tbody.on('click','.fa-times',function(){
+        const $tr = $(this).closest('tr');
+        if(confirm('Xoá bản ghi này?')){
+          $tr.remove();
+          renumberSTT();
+          updateResultInfo();
+        }
+      });
+
+  
+      function rowData($tr){
+        const tds = $tr.children('td');
+        return {
+          stt: $(tds[2]).text().trim(),
+          ten: $(tds[3]).text().trim(),
+          hodem: $(tds[4]).text().trim(),
+          diachi: $(tds[5]).text().trim()
+        };
+      }
+      function getNextStt(){
+        const $last = $tbody.find('tr:visible:last').length ? $tbody.find('tr:visible:last') : $tbody.find('tr:last');
+        const lastVal = parseInt($last.children('td').eq(2).text(),10);
+        return isNaN(lastVal) ? 1 : lastVal + 1;
+   
+      }
+      function renumberSTT(){
+        $tbody.find('tr:visible').each(function(i){
+          $(this).children('td').eq(2).text(i+1);
+        });
+      }
+      function updateResultInfo(){
+        const totalVisible = $tbody.find('tr:visible').length;
+        $('#resultInfo').text(`Kết quả 1 đến ${totalVisible}`);
+      }
+      function esc(s){return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]))}
+      updateResultInfo();
+    });
+  </script>
+</body>
+</html>

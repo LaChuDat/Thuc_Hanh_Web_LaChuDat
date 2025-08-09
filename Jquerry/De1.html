@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Đề 1 - jQuery</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Arial,sans-serif;background:#f4f8fb} 
+  .navbar{background:#0078d4;color:#fff;padding:10px;display:flex;justify-content:space-between;align-items:center}
+  .navbar-left{display:flex;align-items:center;gap:20px}
+  .menu a{margin-left:15px;text-decoration:none;color:#fff}
+  .menu a:hover{color:#ffe083}
+  .navbar-right input{padding:6px;border:1px solid #ccc;border-radius:4px}
+  .navbar-right button{padding:6px 10px;background:#fff;color:#0078d4;border:1px solid #fff;border-radius:5px;font-weight:bold;cursor:pointer}
+  .container{padding-top:20px;background:#fff;border-radius:8px;margin:20px;box-shadow:0 0 8px rgba(0,0,0,.05)}
+  .header-container{background:#005a9e;color:#fff;display:flex;padding:10px;justify-content:space-between;align-items:center;border-radius:6px 6px 0 0}
+  .action{display:flex;gap:8px}
+  .action button{padding:8px 16px;border:0;border-radius:4px;color:#fff;cursor:pointer}
+  .delete-btn{background:#e74c3c}
+  .add-btn{background:#27ae60}
+  table{width:100%;border-collapse:collapse}
+  th,td{border-top:1px solid #ddd;padding:12px;text-align:left}
+  tbody tr:hover{background:#f0f8ff}
+  td span{margin-right:10px;cursor:pointer}
+  .pagination{display:flex;justify-content:space-between;padding:12px;align-items:center;flex-wrap:wrap;background:#f9f9f9;border-top:1px solid #ddd;border-radius:0 0 8px 8px}
+  .pagination button{margin:3px;padding:6px 10px;border:0;background:#fff;border-radius:4px;cursor:pointer}
+  .pagination .active-page,.pagination button:hover{background:#0078d4;color:#fff;font-weight:bold}
+  .modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.3)}
+  .modal-content{background:#fff;padding:20px 24px;border-radius:6px;width:400px;position:relative;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .modal-content h2{margin-bottom:12px;color:#0078d4}
+  .modal-content label{display:block;margin:8px 0 4px;font-weight:bold}
+  .modal-content input,.modal-content textarea{width:100%;padding:8px;margin-bottom:8px;border:1px solid #ccc;border-radius:4px}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px}
+  .modal-actions button[type="submit"]{background:#27ae60;color:#fff;border:0;padding:8px 14px;border-radius:4px;cursor:pointer}
+  .modal-actions button[type="button"]{background:#ccc;border:0;padding:8px 14px;border-radius:4px;cursor:pointer}
+  .close{position:absolute;right:12px;top:8px;font-size:22px;cursor:pointer;color:#999}
+  input.error,textarea.error{border-color:#e22424}
+  label.error{color:#e22424;font-size:13px;margin:2px 0 6px;display:block}
+</style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">
+      <strong>TLU</strong>
+      <nav class="menu">
+        <a href="#">Home</a>
+        <a href="#">Employees</a>
+      </nav>
+    </div>
+    <div class="navbar-right">
+      <input type="text" placeholder="Search"/>
+      <button>Tìm</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-container">
+      <h2>Manage <strong>Employees</strong></h2>
+      <div class="action">
+        <button class="delete-btn" id="btnBulkDelete">Delete</button>
+        <button class="add-btn" id="btnOpen">Add New Employee</button>
+      </div>
+    </div>
+
+    <table id="empTable">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="checkAll"/></th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" class="rowcheck"/></td>
+          <td>Thomas Hardy</td>
+          <td>thomashardy@mail.com</td>
+          <td>89 Chiaroscuro Rd, Portland, USA</td>
+          <td>0171555222</td>
+          <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="rowcheck"/></td>
+          <td>Dominique Perrier</td>
+          <td>dominiqueperrier@mail.com</td>
+          <td>Obere Str. 57, Berlin, Germany</td>
+          <td>0313555573</td>
+          <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="rowcheck"/></td>
+          <td>Maria Anders</td>
+          <td>mariaanders@mail.com</td>
+          <td>25, rue Lauriston, Paris, France</td>
+          <td>0503555993</td>
+          <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="rowcheck"/></td>
+          <td>Fran Wilson</td>
+          <td>franwilson@mail.com</td>
+          <td>C/ Araquil, 67, Madrid, Spain</td>
+          <td>0204619573</td>
+          <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="rowcheck"/></td>
+          <td>Martin Blank</td>
+          <td>martinblank@mail.com</td>
+          <td>Via Monte Bianco 34, Turin, Italy</td>
+          <td>0480631209</td>
+          <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <span>Showing <strong>5</strong> out of <strong>25</strong> entries</span>
+      <div class="page-button">
+        <button>Previous</button>
+        <button>1</button>
+        <button>2</button>
+        <button class="active-page">3</button>
+        <button>4</button>
+        <button>5</button>
+        <button>Next</button>
+      </div>
+    </div>
+  </div>
+  <div id="employeeModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Add Employee</h2>
+      <form id="employeeForm">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text"/>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email"/>
+        <label for="address">Address</label>
+        <textarea id="address" name="address" rows="3"></textarea>
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel"/>
+        <div class="modal-actions">
+          <button type="button" id="btnCancel">Cancel</button>
+          <button type="submit">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+  <script>
+    $(function () {
+      const $modal = $('#employeeModal'),
+            $form  = $('#employeeForm'),
+            $tbody = $('#empTable tbody');
+      $('#btnOpen').on('click', () => $modal.css('display','flex'));
+      $('.close,#btnCancel').on('click', closeModal);
+      $modal.on('click', e => { if(e.target === e.currentTarget) closeModal(); });
+      function closeModal(){
+        $modal.hide();
+        $form[0].reset();
+        $form.validate().resetForm();
+        $form.find('input,textarea').removeClass('error');
+      }
+
+      $('#checkAll').on('change', function(){
+        $('.rowcheck').prop('checked', this.checked);
+      });
+
+      $('#btnBulkDelete').on('click', function(){
+        const $rows = $('.rowcheck:checked').closest('tr');
+        if(!$rows.length) return alert('Chưa chọn bản ghi nào.');
+        if(confirm('Xoá các bản ghi đã chọn?')) $rows.remove();
+      });
+
+      
+      $.validator.addMethod("vnphone", v => /^0\d{9}$/.test(v), "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số.");
+
+   
+      $form.validate({
+        rules:{
+          name:"required",
+          email:{required:true,email:true},
+          address:"required",
+          phone:{required:true,digits:true,vnphone:true}
+        },
+        messages:{
+          name:"Vui lòng nhập tên.",
+          email:{required:"Vui lòng nhập email.", email:"Email không hợp lệ."},
+          phone:{required:"Vui lòng nhập số điện thoại.", digits:"Chỉ được nhập số.", vnphone:"Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số."},
+          address:"Vui lòng nhập thông tin."
+        },
+        submitHandler:function(){
+          const n = $('#name').val().trim(),
+                e = $('#email').val().trim(),
+                a = $('#address').val().trim(),
+                p = $('#phone').val().trim();
+
+    
+          $tbody.append(`
+            <tr>
+              <td><input type="checkbox" class="rowcheck"/></td>
+              <td>${escapeHtml(n)}</td>
+              <td>${escapeHtml(e)}</td>
+              <td>${escapeHtml(a)}</td>
+              <td>${escapeHtml(p)}</td>
+              <td><span class="edit">✏️</span><span class="del">🗑️</span></td>
+            </tr>
+          `);
+          alert('Thêm nhân viên thành công!');
+          closeModal();
+        }
+      });
+
+   
+      $tbody.on('click','.del',function(){
+        if(confirm('Xoá bản ghi này?')) $(this).closest('tr').remove();
+      });
+
+
+      $tbody.on('click','.edit',function(){
+        const $tr = $(this).closest('tr'), tds = $tr.children('td');
+        $('#name').val($(tds[1]).text());
+        $('#email').val($(tds[2]).text());
+        $('#address').val($(tds[3]).text());
+        $('#phone').val($(tds[4]).text());
+        $modal.css('display','flex');
+       
+      });
+      function escapeHtml(s){
+        return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+      }
+    });
+  </script>
+</body>
+</html>
